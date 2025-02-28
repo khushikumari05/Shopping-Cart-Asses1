@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <button class="nav-button" onclick="window.location.href='index.html'">🏠 Home</button>
+
+        <h1>Shopping Cart</h1>
+
+        <div class="product-list">
+            <h2>Products</h2>
+            <div id="products"></div>
+        </div>
+
+        <div id="cart-container" style="display: none;">
+            <h2>Your Cart</h2>
+            <div id="cart"></div>
+
+            <div class="cart-actions">
+                <button onclick="clearCart()">Clear Cart</button>
+                <button onclick="sortCart('asc')">Sort by Price (Asc)</button>
+                <button onclick="sortCart('desc')">Sort by Price (Desc)</button>
+            </div>
+
+            <h3>Total Price: $<span id="total-price">0.00</span></h3>
+            <h3>Average Price: $<span id="average-price">0.00</span></h3>
+        </div>
+
+        <p id="empty-message" class="empty-cart">Your cart is empty.</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
