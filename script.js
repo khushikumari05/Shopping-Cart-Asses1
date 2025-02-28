@@ -1,4 +1,4 @@
-const cart = JSON.parse(localStorage.getItem("cart")) || [];
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 const productsData = [
     {
@@ -113,6 +113,7 @@ const productsData = [
 
 ];
 
+
 // Render Products
 function renderProducts() {
     let productHTML = '';
@@ -130,13 +131,12 @@ function renderProducts() {
     document.getElementById('products').innerHTML = productHTML;
 }
 
-//Add to Cart
+// Add to Cart
 function addToCart(productId) {
-    const product = productsData.find(p => p.id === productId);
-    if (!product) return; // Exit if product not found
+    let product = productsData.find(p => p.id === productId);
+    if (!product) return;
 
     let existingProduct = cart.find(item => item.id === productId);
-
     if (existingProduct) {
         existingProduct.quantity += 1;
     } else {
@@ -150,20 +150,41 @@ function addToCart(productId) {
     renderCart();
 }
 
+// Increment Quantity
+function incrementQuantity(productId) {
+    let product = cart.find(item => item.id === productId);
+    if (product) {
+        product.quantity += 1;
+        updateLocalStorage();
+        renderCart();
+    }
+}
+
+// Decrement Quantity
+function decrementQuantity(productId) {
+    let product = cart.find(item => item.id === productId);
+    if (product) {
+        if (product.quantity > 1) {
+            product.quantity -= 1;
+        } else {
+            cart = cart.filter(item => item.id !== productId);
+        }
+        updateLocalStorage();
+        renderCart();
+    }
+}
+
 // Remove from Cart
 function removeFromCart(productId) {
-    const index = cart.findIndex(item => item.id === productId);
-    if (index !== -1) {
-        cart.splice(index, 1);
-    }
+    cart = cart.filter(item => item.id !== productId);
     updateLocalStorage();
     renderCart();
 }
 
 // Clear Cart
 function clearCart() {
-    localStorage.removeItem("cart");
-    cart.length = 0;
+    cart = [];
+    updateLocalStorage();
     renderCart();
 }
 
@@ -186,8 +207,7 @@ function renderCart() {
     const totalPriceEl = document.getElementById("total-price");
     const avgPriceEl = document.getElementById("average-price");
 
-    cartContainer.innerHTML = ""; // Clear the existing cart UI
-
+    cartContainer.innerHTML = "";
     if (cart.length === 0) {
         cartWrapper.style.display = "none";
         emptyMessage.style.display = "block";
@@ -195,29 +215,36 @@ function renderCart() {
         avgPriceEl.innerText = "0.00";
         return;
     }
-
+    
     cartWrapper.style.display = "block";
     emptyMessage.style.display = "none";
 
     cart.forEach(item => {
         let cartItem = document.createElement("div");
-        cartItem.classList.add("product");
+        cartItem.classList.add("cart-item");
         cartItem.innerHTML = `
             <img src="${item.image}" alt="${item.name}" width="80">
-            <span>${item.name} - $${item.price.toFixed(2)} x ${item.quantity}</span>
+            <h4>${item.name}</h4>
+            <p>$${item.price.toFixed(2)}</p>
+            <div>
+                <button onclick="decrementQuantity(${item.id})">➖</button>
+                <span>${item.quantity}</span>
+                <button onclick="incrementQuantity(${item.id})">➕</button>
+            </div>
             <button onclick="removeFromCart(${item.id})">Remove</button>
         `;
         cartContainer.appendChild(cartItem);
     });
 
-    // Calculate Total and Average Price
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const avg = total / cart.length;
-
+    const avg = total / cart.reduce((sum, item) => sum + item.quantity, 0);
+    
     totalPriceEl.innerText = total.toFixed(2);
-    avgPriceEl.innerText = avg.toFixed(2);
+    avgPriceEl.innerText = isNaN(avg) ? "0.00" : avg.toFixed(2);
 }
 
-// 🌟 Initialize Everything
-renderProducts();
-renderCart();
+// Initialize
+window.onload = function () {
+    renderProducts();
+    renderCart();
+};

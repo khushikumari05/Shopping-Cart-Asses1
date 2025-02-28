@@ -51,16 +51,22 @@ body {
     text-align: center;
     animation: fadeIn 0.5s ease-in-out;
 }
+h1 {
+    color: #424553;
+}
 
 /* Product & Cart Styles */
 .product-list, #cart {
     margin: 20px 0;
 }
-
+.product-list h2 {
+    color: #424553;
+}
 .product {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+
+    display: flex; 
+    justify-content: space-between; 
+     align-items: center;
     background: #f9f9f9;
     padding: 12px;
     margin: 8px 0;
